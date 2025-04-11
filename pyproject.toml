@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "duckdb-tinyorm-py"
+version = "0.1.0"
+description = "A tiny ORM for DuckDB"
+authors = ["Naim Sulejmani <naim.sulejmani@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/naimsulejmani/duckdb-tinyorm-py"
+repository = "https://github.com/naimsulejmani/duckdb-tinyorm-py"
+keywords = ["duckdb", "orm", "tinyorm", "database"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
