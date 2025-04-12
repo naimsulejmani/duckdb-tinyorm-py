@@ -1,5 +1,7 @@
 # duckdb-tinyorm-py
 
+[![PyPI version](https://badge.fury.io/py/duckdb-tinyorm-py.svg)](https://badge.fury.io/py/duckdb-tinyorm-py)
+
 ## Overview
 `duckdb-tinyorm-py` is a lightweight ORM (Object-Relational Mapping) library designed to work seamlessly with DuckDB. It provides an elegant, Pythonic interface for defining entities, managing relationships, and performing database operations.
 
