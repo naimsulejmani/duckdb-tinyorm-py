@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "duckdb-tinyorm-py"
-version = "0.1.1"
+version = "0.1.2"
 description = "A tiny ORM for DuckDB"
 authors = ["Naim Sulejmani <naim.sulejmani@gmail.com>"]
 license = "MIT"
