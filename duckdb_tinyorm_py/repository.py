@@ -343,7 +343,8 @@ class BaseRepository(Generic[T, K]):
                     default_val = field_meta['default']
                     if isinstance(default_val, str):
                         # Ensure proper quoting for string defaults
-                        default_val = f"'{default_val.replace("'", "''")}'" 
+                        escaped = default_val.replace("'", "''")
+                        default_val = f"'{escaped}'"
                     elif isinstance(default_val, bool):
                         # Use TRUE/FALSE for boolean defaults
                         default_val = 'TRUE' if default_val else 'FALSE'
