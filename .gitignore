@@ -65,3 +65,6 @@ pip-delete-this-directory.txt
 # Environment configurations
 .env
 .python-version
+
+#Ignore cursor AI rules
+.cursor/rules/codacy.mdc
