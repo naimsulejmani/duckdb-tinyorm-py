@@ -37,9 +37,10 @@ class MigrationManager:
     
     async def init(self):
         """Initialize migrations table"""
+        self.db.execute(f"CREATE SEQUENCE IF NOT EXISTS seq_{self.migrations_table}")
         sql = f"""
         CREATE TABLE IF NOT EXISTS {self.migrations_table} (
-            id INTEGER PRIMARY KEY,
+            id INTEGER DEFAULT nextval('seq_{self.migrations_table}') PRIMARY KEY,
             name VARCHAR NOT NULL,
             version VARCHAR NOT NULL,
             applied_at TIMESTAMP NOT NULL
