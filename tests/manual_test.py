@@ -1,28 +1,5 @@
-# duckdb-tinyorm-py
-
-[![PyPI version](https://badge.fury.io/py/duckdb-tinyorm-py.svg)](https://badge.fury.io/py/duckdb-tinyorm-py)
-
-## Overview
-`duckdb-tinyorm-py` is a lightweight ORM (Object-Relational Mapping) library designed to work seamlessly with DuckDB. It provides an elegant, Pythonic interface for defining entities, managing relationships, and performing database operations.
-
-## Installation
-You can install the library using pip:
-
-```bash
-pip install duckdb-tinyorm-py
-```
-
-For export functionality, install additional dependencies:
-
-```bash
-pip install pyarrow  # For Parquet export support
-```
-
-## Basic Usage
-
-### Define an Entity
-```python
-from duckdb_tinyorm_py import entity, field, id_field
+from duckdb_tinyorm_py import entity, field, id_field,BaseRepository, repository, DuckDbConfig, DuckDbLocation
+import asyncio
 
 @entity(table_name="courses")
 class Course:
@@ -57,11 +34,8 @@ class Course:
     @department.setter
     def department(self, value: str):
         self._department = value
-```
 
-### Create a Repository
-```python
-from duckdb_tinyorm_py import BaseRepository, repository, DuckDbConfig, DuckDbLocation
+
 
 # Configure your database
 config = DuckDbConfig(
@@ -76,11 +50,8 @@ class CourseRepository(BaseRepository[Course, int]):
     async def find_by_department(self, department):
         """Find courses by department"""
         return await self.find_by({"department": department})
-```
+    
 
-### Use the Repository
-```python
-import asyncio
 
 async def main():
     # Initialize repository and create table
@@ -110,30 +81,3 @@ async def main():
 
 # Run the async code
 asyncio.run(main())
-```
-
-## Features
-- Property-based entity mapping with type hints
-- Auto-incrementing primary keys
-- Advanced querying capabilities
-- Transaction support
-- Data export to DataFrame, JSON, CSV, and Parquet
-- Support for table indices
-- Connection pooling and configuration
-
-## Advanced Features
-See the `advanced_usage.py` file for examples of:
-- Complex queries with pagination
-- Filtering and sorting
-- Transaction safety 
-- Data imports/exports
-- Custom repository methods
-
-## Contributing
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bugs.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
-
-
-Bye me a Caffee!
