@@ -174,7 +174,7 @@ class QueryBuilder:
         
         # Convert the last condition to use OR
         last_clause = self.where_clauses.pop()
-        self.where_clauses.append(f"({last_clause} OR {field} {operator} :{param_name})")
+        self.where_clauses.append(f"({last_clause} OR {field} {operator} ?)")
         self.params[param_name] = value
         return self
     
@@ -187,7 +187,7 @@ class QueryBuilder:
         param_names = []
         for value in values:
             param_name = f"param_{len(self.params)}"
-            param_names.append(f":{param_name}")
+            param_names.append("?")
             self.params[param_name] = value
         
         placeholders = ", ".join(param_names)
@@ -533,31 +533,31 @@ class BaseRepository(Generic[T, K]):
         id_value = entity_dict[self.id_field]
         
         field_updates = []
-        field_values = {}
+        param_values = []
         
         for field_name, value in entity_dict.items():
             if field_name != self.id_field:
-                field_updates.append(f"{field_name} = :{field_name}")
-                field_values[field_name] = value
+                field_updates.append(f"{field_name} = ?")
+                param_values.append(value)
         
-        field_values[self.id_field] = id_value
+        param_values.append(id_value)
         updates_str = ', '.join(field_updates)
         
-        sql = f"UPDATE {self.table_name} SET {updates_str} WHERE {self.id_field} = :{self.id_field}"
-        self.db.execute(sql, field_values)
+        sql = f"UPDATE {self.table_name} SET {updates_str} WHERE {self.id_field} = ?"
+        self.db.execute(sql, param_values)
         
         return entity
     
     async def exists_by_id(self, id_value: K) -> bool:
         """Check if an entity exists by ID"""
-        sql = f"SELECT 1 FROM {self.table_name} WHERE {self.id_field} = :{self.id_field} LIMIT 1"
-        result = self.db.execute_and_fetch(sql, {self.id_field: id_value})
+        sql = f"SELECT 1 FROM {self.table_name} WHERE {self.id_field} = ? LIMIT 1"
+        result = self.db.execute_and_fetch(sql, [id_value])
         return len(result) > 0
     
     async def find_by_id(self, id_value: K) -> Optional[T]:
         """Find an entity by ID"""
-        sql = f"SELECT * FROM {self.table_name} WHERE {self.id_field} = :{self.id_field} LIMIT 1"
-        result = self.db.execute_and_fetch(sql, {self.id_field: id_value})
+        sql = f"SELECT * FROM {self.table_name} WHERE {self.id_field} = ? LIMIT 1"
+        result = self.db.execute_and_fetch(sql, [id_value])
         
         if not result:
             return None
@@ -655,8 +655,8 @@ class BaseRepository(Generic[T, K]):
     
     async def remove_by_id(self, id_value: K) -> bool:
         """Remove an entity by ID"""
-        sql = f"DELETE FROM {self.table_name} WHERE {self.id_field} = :{self.id_field}"
-        self.db.execute(sql, {self.id_field: id_value})
+        sql = f"DELETE FROM {self.table_name} WHERE {self.id_field} = ?"
+        self.db.execute(sql, [id_value])
         return True
     
     async def remove(self, entity: T) -> bool:
@@ -677,7 +677,8 @@ class BaseRepository(Generic[T, K]):
             where_clause = f"WHERE {sql_parts[1]}" if len(sql_parts) > 1 else ""
             
             sql = f"DELETE FROM {self.table_name} {where_clause}"
-            self.db.execute(sql, query_builder.params)
+            _, param_values = query_builder.build()
+            self.db.execute(sql, param_values)
             # DuckDB doesn't have a way to return the number of deleted rows directly
             return 1  # Assuming success
         else:
