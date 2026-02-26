@@ -37,9 +37,10 @@ class MigrationManager:
     
     async def init(self):
         """Initialize migrations table"""
+        self.db.execute(f"CREATE SEQUENCE IF NOT EXISTS seq_{self.migrations_table}")
         sql = f"""
         CREATE TABLE IF NOT EXISTS {self.migrations_table} (
-            id INTEGER PRIMARY KEY,
+            id INTEGER DEFAULT nextval('seq_{self.migrations_table}') PRIMARY KEY,
             name VARCHAR NOT NULL,
             version VARCHAR NOT NULL,
             applied_at TIMESTAMP NOT NULL
@@ -72,8 +73,8 @@ class MigrationManager:
             await self.init()
         
         # Check if migration was already applied
-        sql = f"SELECT 1 FROM {self.migrations_table} WHERE name = :name AND version = :version"
-        params = {"name": migration.name, "version": migration.version}
+        sql = f"SELECT 1 FROM {self.migrations_table} WHERE name = ? AND version = ?"
+        params = [migration.name, migration.version]
         result = self.db.execute_and_fetch(sql, params)
         
         if result:
@@ -90,9 +91,9 @@ class MigrationManager:
             # Record migration
             sql = f"""
             INSERT INTO {self.migrations_table} (name, version, applied_at)
-            VALUES (:name, :version, CURRENT_TIMESTAMP)
+            VALUES (?, ?, CURRENT_TIMESTAMP)
             """
-            params = {"name": migration.name, "version": migration.version}
+            params = [migration.name, migration.version]
             self.db.execute(sql, params)
             
             self.db.commit()
@@ -109,8 +110,8 @@ class MigrationManager:
             await self.init()
         
         # Check if migration was applied
-        sql = f"SELECT 1 FROM {self.migrations_table} WHERE name = :name AND version = :version"
-        params = {"name": migration.name, "version": migration.version}
+        sql = f"SELECT 1 FROM {self.migrations_table} WHERE name = ? AND version = ?"
+        params = [migration.name, migration.version]
         result = self.db.execute_and_fetch(sql, params)
         
         if not result:
@@ -127,9 +128,9 @@ class MigrationManager:
             # Remove migration record
             sql = f"""
             DELETE FROM {self.migrations_table} 
-            WHERE name = :name AND version = :version
+            WHERE name = ? AND version = ?
             """
-            params = {"name": migration.name, "version": migration.version}
+            params = [migration.name, migration.version]
             self.db.execute(sql, params)
             
             self.db.commit()

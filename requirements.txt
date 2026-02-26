@@ -1,19 +1,19 @@
 # Core dependencies
-duckdb>=0.7.0
-pandas>=1.3.0
-numpy>=1.20.0
+duckdb>=1.0.0
+pandas>=2.0.0
+numpy>=1.24.0
 
 # Optional dependencies for export functionality
-pyarrow>=7.0.0  # For Parquet export support
-fastparquet>=0.8.0  # Alternative Parquet engine
+pyarrow>=11.0.0  # For Parquet export support
+fastparquet>=2023.1.0  # Alternative Parquet engine
 
 # Optional dependencies for configuration
-pyyaml>=6.0  # For YAML config loading
+pyyaml>=6.0.1  # For YAML config loading
 
 # For advanced features
-typing-extensions>=4.0.0  # For better type hints support
+typing-extensions>=4.4.0  # For better type hints support
 
 # Development dependencies
-pytest>=7.0.0  # For testing
-black>=22.0.0  # For code formatting
+pytest>=7.4.0  # For testing
+black>=23.1.0  # For code formatting
 
